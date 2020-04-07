@@ -1,0 +1,45 @@
+version: '3.7'
+services:
+  elk-node:
+    build:
+      context: .
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    image: elk:${ELK_VERSION}
+    environment:
+      - node.name=elk-node
+      - cluster.initial_master_nodes=elk-node
+      - cluster.name=elk-cluster
+      - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elk-data1:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - elk-net
+    healthcheck:
+      start_period: 15s
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 10s
+      timeout: 2s
+      retries: 5
+  kibana:
+    image: docker.elastic.co/kibana/kibana:${ELK_VERSION}
+    container_name: elk-kibana
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_HOSTS: http://elk-node:9200
+    networks:
+      - elk-net
+
+volumes:
+  elk-data1:
+
+networks:
+  elk-net:
