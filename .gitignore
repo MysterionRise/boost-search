@@ -5,7 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
-
+.DS_Store
 # Distribution / packaging
 .Python
 env/
@@ -98,5 +98,6 @@ ENV/
 /site
 
 .idea
+pdfs
 # mypy
 .mypy_cache/
