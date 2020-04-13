@@ -99,5 +99,6 @@ ENV/
 
 .idea
 pdfs
+pages-pdfs
 # mypy
 .mypy_cache/
