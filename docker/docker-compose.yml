@@ -11,7 +11,7 @@ services:
       - cluster.initial_master_nodes=elk-node
       - cluster.name=elk-cluster
       - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
     ulimits:
       memlock:
         soft: -1
