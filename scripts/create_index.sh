@@ -18,6 +18,15 @@ curl -X PUT "localhost:9200/pdfs?pretty" -H 'Content-Type: application/json' -d'
           }
         }
       },
+      "document_name" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword",
+            "ignore_above" : 256
+          }
+        }
+      },
       "chapter_name" : {
         "type" : "text",
         "fields" : {
