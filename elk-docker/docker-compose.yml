@@ -11,13 +11,13 @@ services:
       - cluster.initial_master_nodes=elk-node
       - cluster.name=elk-cluster
       - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
-      - "ES_JAVA_OPTS=-Xms3g -Xmx3g"
+      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
     ulimits:
       memlock:
         soft: -1
         hard: -1
     volumes:
-      - elk-data1:/usr/share/elasticsearch/data
+      - ./elk-data1:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
     networks:

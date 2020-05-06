@@ -102,3 +102,6 @@ pdfs
 pages-pdfs
 # mypy
 .mypy_cache/
+
+opendistro-docker/odfe-data1
+elk-docker/elk-data1

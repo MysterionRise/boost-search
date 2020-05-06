@@ -13,7 +13,7 @@ services:
       - cluster.name=odfe-cluster
       - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
 #      - opendistro_security.ssl.http.enabled=false
-      - "ES_JAVA_OPTS=-Xms3g -Xmx3g"
+      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
       - cluster.initial_master_nodes=odfe-node1
       - discovery.seed_hosts=odfe-node1
     ulimits:
@@ -24,7 +24,7 @@ services:
         soft: 65536 # maximum number of open files for the Elasticsearch user, set to at least 65536 on modern systems
         hard: 65536
     volumes:
-      - odfe-data1:/usr/share/elasticsearch/data
+      - ./odfe-data1:/usr/share/elasticsearch/data
       #- ./root-ca.pem:/usr/share/elasticsearch/config/root-ca.pem
       #- ./esnode.pem:/usr/share/elasticsearch/config/esnode.pem
       #- ./esnode-key.pem:/usr/share/elasticsearch/config/esnode-key.pem
