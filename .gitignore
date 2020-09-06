@@ -105,3 +105,5 @@ pages-pdfs
 
 opendistro-docker/odfe-data1
 elk-docker/elk-data1
+/haystack/data/
+/haystack/mlruns/
