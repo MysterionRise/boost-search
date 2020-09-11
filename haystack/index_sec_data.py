@@ -1,5 +1,6 @@
+import re
+
 from haystack import Finder
-from haystack.indexing.cleaning import clean_wiki_text
 from haystack.indexing.utils import convert_files_to_dicts, fetch_archive_from_http
 from haystack.reader.farm import FARMReader
 from haystack.reader.transformers import TransformersReader
@@ -7,16 +8,35 @@ from haystack.utils import print_answers
 
 from haystack.database.elasticsearch import ElasticsearchDocumentStore
 
+
+def clean_wiki_text(text: str) -> str:
+    # get rid of multiple new lines
+    while "\n\n" in text:
+        text = text.replace("\n\n", "\n")
+
+    # remove extremely short lines
+    lines = text.split("\n")
+    cleaned = []
+    for l in lines:
+        if len(l) > 30:
+            cleaned.append(l)
+        elif l[:2] == "==" and l[-2:] == "==":
+            cleaned.append(l)
+    text = "\n".join(cleaned)
+
+    # add paragraphs (identified by wiki section title which is always in format "==Some Title==")
+    text = text.replace("\n==", "\n\n\n==")
+
+    # remove empty paragrahps
+    text = re.sub(r"(==.*==\n\n\n)", "", text)
+
+    return text
+
+
 document_store = ElasticsearchDocumentStore(host="localhost", username="admin", password="admin", scheme="https",
-                                            index="got", verify_certs=False)
+                                            index="sec", verify_certs=False)
 
-
-# Let's first get some documents that we want to query
-# Here: 517 Wikipedia articles for Game of Thrones
-doc_dir = "data/article_txt_got"
-s3_url = "https://s3.eu-central-1.amazonaws.com/deepset.ai-farm-qa/datasets/documents/wiki_gameofthrones_txt.zip"
-fetch_archive_from_http(url=s3_url, output_dir=doc_dir)
-
+doc_dir = "data/sec"
 # Convert files to dicts
 # You can optionally supply a cleaning function that is applied to each doc (e.g. to remove footers)
 # It must take a str as input, and return a str.

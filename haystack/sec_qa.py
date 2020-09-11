@@ -12,7 +12,7 @@ from haystack.database.elasticsearch import ElasticsearchDocumentStore
 
 if __name__ == '__main__':
     document_store = ElasticsearchDocumentStore(host="localhost", username="admin", password="admin", scheme="https",
-                                                index="got", verify_certs=False)
+                                                index="sec", verify_certs=False)
 
     retriever = ElasticsearchRetriever(document_store=document_store)
 
@@ -22,13 +22,30 @@ if __name__ == '__main__':
     # model.save(farm_model_dir)
     # deepset/roberta-base-squad2
     # distilbert-base-uncased-distilled-squad
-    reader = FARMReader(model_name_or_path="deepset/roberta-base-squad2", use_gpu=False)
+    # deepset/bert-large-uncased-whole-word-masking-squad2
+    # ahotrod/electra_large_discriminator_squad2_512
+    # mfeb/albert-xxlarge-v2-squad2
+    reader = FARMReader(model_name_or_path="deepset/bert-large-uncased-whole-word-masking-squad2", use_gpu=False)
     # reader.save("/Users/konstantinp/Downloads/bert-base-uncased")
     finder = Finder(reader, retriever)
 
-    # prediction = finder.get_answers(question="How the biggest dragon of Daenerys was called?", top_k_retriever=10, top_k_reader=5)
-    # prediction = finder.get_answers(question="Who is the father of Arya Stark?", top_k_retriever=10, top_k_reader=5)
-    # prediction = finder.get_answers(question="Who killed the King of the Night?", top_k_retriever=10, top_k_reader=5)
-    prediction = finder.get_answers(question="Who is the brother of Ned Stark?", top_k_retriever=10, top_k_reader=5)
+    prediction = finder.get_answers(question="Who is Oleg Vilchinski?", top_k_retriever=10, top_k_reader=5)
 
     print_answers(prediction, details="minimal")
+
+    prediction = finder.get_answers(question="What is Regeneron?", top_k_retriever=10, top_k_reader=5)
+
+    print_answers(prediction, details="minimal")
+
+    prediction = finder.get_answers(question="Where Veller works?", top_k_retriever=10, top_k_reader=5)
+
+    print_answers(prediction, details="minimal")
+
+    prediction = finder.get_answers(question="How I could use AWS Lambda?", top_k_retriever=10, top_k_reader=5)
+
+    print_answers(prediction, details="minimal")
+
+# todo don't do clean up as in wiki
+# todo list of models? check different models
+# todo change the way to process original data
+#
