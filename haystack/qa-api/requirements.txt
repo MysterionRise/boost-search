@@ -1,0 +1,6 @@
+connexion
+Flask
+Flask-Cors
+gunicorn
+swagger-ui-bundle
+farm-haystack
