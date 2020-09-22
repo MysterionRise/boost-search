@@ -109,3 +109,5 @@ elk-docker/elk-data1
 /haystack/mlruns/
 /haystack/odfe-data/
 /jina/data/
+/jina/nlp-search/v/
+/jina/nlp-search/urbandict-word-defs.csv
