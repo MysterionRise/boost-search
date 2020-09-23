@@ -18,7 +18,7 @@ def config():
     os.environ['COLOR_CHANNEL_AXIS'] = str(0)
     os.environ['JINA_PORT'] = str(45678)
     os.environ['ENCODER'] = os.environ.get('ENCODER',
-                                           'jinaai/hub.executors.encoders.image.torchvision-mobilenet_v2:latest')
+                                           'jinaai/hub.executors.encoders.image.torchvision-mobilenet_v2')
     os.environ['TMP_WORKSPACE'] = os.environ.get('TMP_WORKSPACE', get_random_ws(os.environ['TMP_DATA_DIR']))
 
 

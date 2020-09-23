@@ -17,6 +17,10 @@ def index(arg_ns: argparse.Namespace):
 
 def query(arg_ns: argparse.Namespace):
     print('querying...')
+    # f = Flow().load_config('flow-query.yml')
+    # f.use_rest_gateway()
+    # with f:
+    #     f.block()
     flow = Flow().load_config('flow-query.yml')
     with flow.build() as fl:
         if arg_ns.text:
