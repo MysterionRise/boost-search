@@ -1,8 +1,8 @@
-## Elastic based project for indexing pdfs and searching across them
+## Different cutting-edge approaches to traditional information retrieval projects
 
 What's inside:
-- docker image with Elastic and Kibana
+- Docker compose files with Elastic and Kibana nodes (both Elastic and Open Distro)
 - pdf indexing via ingest-attachment
-- farm-haystack docker-compose ready project
-- jina-ai plays
-- nboost plays
+- farm-haystack docker-compose ready project (https://github.com/deepset-ai/haystack)
+- jina-ai plays (https://github.com/jina-ai/jina)
+- nboost (https://github.com/koursaros-ai/nboost)
