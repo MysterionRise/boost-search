@@ -5,3 +5,4 @@ What's inside:
 - pdf indexing via ingest-attachment
 - farm-haystack docker-compose ready project
 - jina-ai plays
+- nboost plays
