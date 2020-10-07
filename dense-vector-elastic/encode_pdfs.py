@@ -3,7 +3,7 @@ import glob
 import requests
 from PyPDF2 import PdfFileWriter, PdfFileReader
 
-orig_path = "../pdfs/*.pdf"
+orig_path = "../dense-vector-elastic/pdfs/*.pdf"
 
 # for fname in glob.glob(orig_path):
 #     filename = fname.split('/')[2]
@@ -17,7 +17,7 @@ orig_path = "../pdfs/*.pdf"
 
 id = 0
 
-pages_path = "../pages-pdfs/*.pdf"
+pages_path = "../dense-vector-elastic/pages-pdfs/*.pdf"
 
 for fname in glob.glob(pages_path):
     print(fname)

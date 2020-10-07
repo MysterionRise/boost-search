@@ -98,8 +98,8 @@ ENV/
 /site
 
 .idea
-pdfs
-pages-pdfs
+dense-vector-elastic/pdfs
+dense-vector-elastic/pages-pdfs
 # mypy
 .mypy_cache/
 
