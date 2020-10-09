@@ -1,12 +1,7 @@
 import re
 
-from haystack import Finder
-from haystack.indexing.utils import convert_files_to_dicts, fetch_archive_from_http
-from haystack.reader.farm import FARMReader
-from haystack.reader.transformers import TransformersReader
-from haystack.utils import print_answers
-
-from haystack.database.elasticsearch import ElasticsearchDocumentStore
+from haystack.document_store.elasticsearch import ElasticsearchDocumentStore
+from haystack.preprocessor.utils import convert_files_to_dicts
 
 
 def clean_wiki_text(text: str) -> str:
@@ -24,11 +19,17 @@ def clean_wiki_text(text: str) -> str:
             cleaned.append(l)
     text = "\n".join(cleaned)
 
+    # add paragraphs (identified by wiki section title which is always in format "==Some Title==")
+    text = text.replace("\n==", "\n\n\n==")
+
+    # remove empty paragrahps
+    text = re.sub(r"(==.*==\n\n\n)", "", text)
+
     return text
 
 
-document_store = ElasticsearchDocumentStore(host="localhost", username="admin", password="admin", scheme="https",
-                                            index="sec", verify_certs=False)
+document_store = ElasticsearchDocumentStore(host="localhost", scheme="http",
+                                            index="sec")
 
 doc_dir = "data/sec"
 # Convert files to dicts

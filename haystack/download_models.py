@@ -14,7 +14,7 @@ if __name__ == '__main__':
     for model_name in models:
         model = AdaptiveModel.convert_from_transformers(model_name, device="cpu", task_type="question_answering")
         reader = FARMReader(model_name_or_path=model_name, use_gpu=False)
-        farm_model_dir = Path("/Users/konstantinp/projects/boost-search/haystack/data/models/{}".format(model_name))
+        farm_model_dir = Path("./data/models/{}".format(model_name))
         reader.save(farm_model_dir)
 
 # todo don't do clean up as in wiki
