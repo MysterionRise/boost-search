@@ -22,7 +22,7 @@ entrypoints==0.3
 faiss-cpu==1.6.3
 farm==0.4.9
 farm-haystack==0.4.0
-fastapi==0.61.1
+fastapi==0.65.2
 filelock==3.0.12
 Flask==1.1.2
 Flask-Cors==3.0.9
