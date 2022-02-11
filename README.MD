@@ -6,3 +6,4 @@ What's inside:
 - *farm-haystack* docker-compose ready project with Q&A app (https://github.com/deepset-ai/haystack)
 - *jina-ai* plays with image and text similarity (https://github.com/jina-ai/jina)
 - *nboost* (https://github.com/koursaros-ai/nboost)
+- *Milvus* (https://milvus.io/)
