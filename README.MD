@@ -7,3 +7,4 @@ What's inside:
 - *jina-ai* plays with image and text similarity (https://github.com/jina-ai/jina)
 - *nboost* (https://github.com/koursaros-ai/nboost)
 - *Milvus* (https://milvus.io/)
+- [Permissions search](permissions-search/README.md) in Elastic

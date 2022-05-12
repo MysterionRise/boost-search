@@ -1,11 +1,7 @@
 version: '3.7'
 services:
   elk-node:
-    build:
-      context: .
-      args:
-        ELK_VERSION: ${ELK_VERSION}
-    image: elk:${ELK_VERSION}
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2
     environment:
       - node.name=elk-node
       - cluster.initial_master_nodes=elk-node
@@ -29,12 +25,12 @@ services:
       timeout: 2s
       retries: 5
   kibana:
-    image: docker.elastic.co/kibana/kibana:${ELK_VERSION}
+    image: docker.elastic.co/kibana/kibana-oss:7.10.2
     container_name: elk-kibana
     ports:
       - "5601:5601"
     environment:
-      ELASTICSEARCH_HOSTS: http://elk-node:9200
+      ELASTICSEARCH_HOSTS: '["http://elk-node:9200"]'
     networks:
       - elk-net
 
