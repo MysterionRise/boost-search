@@ -2,7 +2,8 @@
 
 ## How to
 
-Install Redis
+Run Redis Search with the following command:
 ```
-brew install redis
+docker run -p 6379:6379 redislabs/redisearch:latest
 ```
+
