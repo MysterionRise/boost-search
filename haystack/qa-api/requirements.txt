@@ -38,7 +38,7 @@ inflection==0.5.1
 itsdangerous==1.1.0
 Jinja2==2.11.3
 jmespath==0.10.0
-joblib==0.17.0
+joblib==1.2.0
 jsonschema==3.2.0
 Keras==2.4.3
 langdetect==1.0.8
