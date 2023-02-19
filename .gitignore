@@ -111,4 +111,5 @@ elk-docker/elk-data1
 /jina/data/
 /jina/nlp-search/v/
 /jina/nlp-search/urbandict-word-defs.csv
+/milvius/volumes/
 /haystack/data/
