@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: QA application
   version: '0.0.1'
-  description: QA based on haystack
+  description: QA based on haystack-legacy
 basePath: /
 consumes:
   - application/json

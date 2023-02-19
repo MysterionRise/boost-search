@@ -105,9 +105,10 @@ dense-vector-elastic/pages-pdfs
 
 opendistro-docker/odfe-data1
 elk-docker/elk-data1
-/haystack/data/
-/haystack/mlruns/
-/haystack/odfe-data/
+/haystack-legacy/data/
+/haystack-legacy/mlruns/
+/haystack-legacy/odfe-data/
 /jina/data/
 /jina/nlp-search/v/
 /jina/nlp-search/urbandict-word-defs.csv
+/haystack/data/
