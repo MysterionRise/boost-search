@@ -79,7 +79,7 @@ sklearn==0.0
 smmap==3.0.4
 SQLAlchemy==1.3.19
 SQLAlchemy-Utils==0.36.8
-sqlparse==0.4.2
+sqlparse==0.4.4
 starlette==0.25.0
 swagger-ui-bundle==0.0.8
 tabulate==0.8.7
