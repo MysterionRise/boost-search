@@ -45,7 +45,7 @@ langdetect==1.0.8
 lxml==4.9.1
 Mako==1.2.2
 MarkupSafe==1.1.1
-mlflow==2.5.0
+mlflow==2.9.2
 numpy==1.22.0
 openapi-spec-validator==0.2.9
 packaging==20.4
