@@ -43,6 +43,9 @@ qdrant_storage/
 *.docx
 *.txt
 !requirements.txt
+!requirements-dev.txt
+!README*.txt
+!README*.md
 
 # Models
 models/

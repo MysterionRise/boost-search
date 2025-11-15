@@ -362,6 +362,37 @@ docker-compose --profile local-llm up
 4. **Alpha Parameter**: Adjust hybrid search weight (0.5 = equal, >0.5 favors vector)
 5. **Top-K Retrieval**: Retrieve 20-50, rerank to 3-5 for best results
 
+## 🧪 Testing
+
+Comprehensive test suite with 80%+ coverage. See [Testing Guide](README_TESTING.md) for details.
+
+```bash
+# Run all tests
+make test
+
+# Run unit tests only (fast)
+make test-unit
+
+# Run with coverage
+make test-cov
+
+# Lint and format
+make lint
+make format
+
+# Run security checks
+make security
+```
+
+### CI/CD
+
+- ✅ Automated testing on Python 3.11 & 3.12
+- ✅ Code quality checks (Black, Ruff, MyPy)
+- ✅ Integration tests with Qdrant
+- ✅ Docker build verification
+- ✅ Security scanning (Bandit, Safety, CodeQL)
+- ✅ Coverage reporting with Codecov
+
 ## 🛠️ Development
 
 ### Project Structure

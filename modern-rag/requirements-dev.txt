@@ -1,0 +1,15 @@
+# Test dependencies
+pytest==8.0.0
+pytest-asyncio==0.23.4
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+pytest-timeout==2.2.0
+
+# Code quality
+black==24.1.1
+ruff==0.2.1
+mypy==1.8.0
+types-requests==2.31.0.20240125
+
+# Pre-commit hooks (optional)
+pre-commit==3.6.0
