@@ -1,0 +1,131 @@
+"""Reranking implementation using FlashRank."""
+
+from typing import List, Tuple
+from langchain_core.documents import Document
+from flashrank import Ranker, RerankRequest
+
+from .config import settings
+
+
+class Reranker:
+    """Reranks search results using cross-encoder models."""
+
+    def __init__(self, model_name: str = "ms-marco-MiniLM-L-12-v2"):
+        """Initialize reranker.
+
+        Args:
+            model_name: Name of the reranking model
+        """
+        self.ranker = Ranker(model_name=model_name)
+        print(f"Initialized reranker: {model_name}")
+
+    def rerank(
+        self,
+        query: str,
+        documents: List[Document],
+        top_k: int = None,
+    ) -> List[Tuple[Document, float]]:
+        """Rerank documents based on query relevance.
+
+        Args:
+            query: Search query
+            documents: List of documents to rerank
+            top_k: Number of top results to return
+
+        Returns:
+            List of (document, score) tuples sorted by relevance
+        """
+        if not documents:
+            return []
+
+        top_k = top_k or settings.top_k_rerank
+
+        # Prepare passages for reranking
+        passages = []
+        for i, doc in enumerate(documents):
+            passages.append({
+                "id": i,
+                "text": doc.page_content,
+                "meta": doc.metadata,
+            })
+
+        # Create rerank request
+        rerank_request = RerankRequest(
+            query=query,
+            passages=passages,
+        )
+
+        # Perform reranking
+        results = self.ranker.rerank(rerank_request)
+
+        # Map results back to documents
+        reranked = []
+        for result in results[:top_k]:
+            doc_idx = result["id"]
+            score = result["score"]
+            reranked.append((documents[doc_idx], score))
+
+        return reranked
+
+
+class HybridSearchWithReranking:
+    """Combines hybrid search with reranking."""
+
+    def __init__(self, hybrid_searcher, reranker: Reranker = None):
+        """Initialize hybrid search with reranking.
+
+        Args:
+            hybrid_searcher: HybridSearcher instance
+            reranker: Reranker instance (optional)
+        """
+        self.hybrid_searcher = hybrid_searcher
+        self.reranker = reranker or (Reranker() if settings.rerank_enabled else None)
+
+    def search(
+        self,
+        query: str,
+        search_type: str = None,
+        top_k_retrieval: int = None,
+        top_k_final: int = None,
+        rerank: bool = None,
+        **kwargs,
+    ) -> List[Tuple[Document, float]]:
+        """Search with optional reranking.
+
+        Args:
+            query: Search query
+            search_type: Type of search ('vector', 'bm25', 'hybrid')
+            top_k_retrieval: Number of documents to retrieve initially
+            top_k_final: Number of final results after reranking
+            rerank: Whether to apply reranking
+            **kwargs: Additional search arguments
+
+        Returns:
+            List of (document, score) tuples
+        """
+        rerank = rerank if rerank is not None else settings.rerank_enabled
+        top_k_retrieval = top_k_retrieval or settings.top_k_retrieval
+        top_k_final = top_k_final or settings.top_k_final
+
+        # Initial retrieval
+        results = self.hybrid_searcher.search(
+            query=query,
+            search_type=search_type,
+            top_k=top_k_retrieval,
+            **kwargs,
+        )
+
+        # Extract documents
+        documents = [doc for doc, _ in results]
+
+        # Apply reranking if enabled
+        if rerank and self.reranker and documents:
+            results = self.reranker.rerank(
+                query=query,
+                documents=documents,
+                top_k=top_k_final,
+            )
+        else:
+            results = results[:top_k_final]
+
+        return results

@@ -1,0 +1,52 @@
+# Modern RAG Stack - 2024/2025 Dependencies
+
+# Core LLM Framework
+langchain==0.1.9
+langchain-community==0.0.20
+langchain-openai==0.0.5
+langchain-core==0.1.23
+
+# Vector Database
+qdrant-client==1.7.3
+
+# Embeddings & Models
+sentence-transformers==2.3.1
+openai==1.12.0
+tiktoken==0.5.2
+
+# Hybrid Search Components
+rank-bm25==0.2.2
+
+# Reranking
+flashrank==0.2.4
+
+# Document Processing
+unstructured==0.12.4
+pypdf==4.0.1
+python-docx==1.1.0
+python-magic==0.4.27
+
+# Observability & Monitoring
+langsmith==0.0.87
+opentelemetry-api==1.22.0
+opentelemetry-sdk==1.22.0
+
+# Evaluation
+ragas==0.1.5
+
+# API & Server
+fastapi==0.109.2
+uvicorn[standard]==0.27.1
+pydantic==2.6.1
+pydantic-settings==2.1.0
+
+# Utilities
+python-dotenv==1.0.1
+tenacity==8.2.3
+tqdm==4.66.1
+numpy==1.26.4
+pandas==2.2.0
+
+# Optional: Local LLM support
+# ollama==0.1.6
+# vllm==0.3.0
