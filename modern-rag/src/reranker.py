@@ -1,6 +1,6 @@
-"""Reranking implementation using FlashRank."""
+"""Reranking implementation using sentence-transformers cross-encoder (Python 3.12 compatible)."""
 
-from flashrank import Ranker, RerankRequest
+from sentence_transformers import CrossEncoder
 from langchain_core.documents import Document
 
 from .config import settings
@@ -9,14 +9,19 @@ from .config import settings
 class Reranker:
     """Reranks search results using cross-encoder models."""
 
-    def __init__(self, model_name: str = "ms-marco-MiniLM-L-12-v2"):
+    def __init__(self, model_name: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"):
         """Initialize reranker.
 
         Args:
-            model_name: Name of the reranking model
+            model_name: Name of the cross-encoder model
+                       Default: cross-encoder/ms-marco-MiniLM-L-6-v2 (lightweight, good performance)
+                       Alternatives:
+                       - cross-encoder/ms-marco-MiniLM-L-12-v2 (larger, better quality)
+                       - cross-encoder/ms-marco-TinyBERT-L-2-v2 (tiny, fastest)
         """
-        self.ranker = Ranker(model_name=model_name)
-        print(f"Initialized reranker: {model_name}")
+        self.model = CrossEncoder(model_name)
+        self.model_name = model_name
+        print(f"Initialized cross-encoder reranker: {model_name}")
 
     def rerank(
         self,
@@ -39,34 +44,18 @@ class Reranker:
 
         top_k = top_k or settings.top_k_rerank
 
-        # Prepare passages for reranking
-        passages = []
-        for i, doc in enumerate(documents):
-            passages.append(
-                {
-                    "id": i,
-                    "text": doc.page_content,
-                    "meta": doc.metadata,
-                }
-            )
+        # Prepare query-document pairs for cross-encoder
+        pairs = [[query, doc.page_content] for doc in documents]
 
-        # Create rerank request
-        rerank_request = RerankRequest(
-            query=query,
-            passages=passages,
-        )
+        # Get relevance scores
+        scores = self.model.predict(pairs)
 
-        # Perform reranking
-        results = self.ranker.rerank(rerank_request)
+        # Combine documents with scores and sort by score (descending)
+        doc_scores = list(zip(documents, scores))
+        doc_scores.sort(key=lambda x: x[1], reverse=True)
 
-        # Map results back to documents
-        reranked = []
-        for result in results[:top_k]:
-            doc_idx = result["id"]
-            score = result["score"]
-            reranked.append((documents[doc_idx], score))
-
-        return reranked
+        # Return top_k results
+        return doc_scores[:top_k]
 
 
 class HybridSearchWithReranking:

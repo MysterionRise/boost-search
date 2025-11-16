@@ -1,6 +1,6 @@
-# Locked versions - Tested and working together
-# Generated: 2024-11-16
-# Python 3.11 and 3.12 compatible
+# Python 3.12+ Compatible - Locked Versions
+# Generated: 2025-11-16
+# Removed problematic dependencies: flashrank, unstructured, ragas
 # Use this for reproducible builds
 
 # Core LLM Framework
@@ -12,29 +12,17 @@ langchain-openai==0.1.7
 # Vector Database
 qdrant-client==1.9.1
 
-# Embeddings & Models
+# Embeddings & Models (cross-encoder for reranking included)
 sentence-transformers==2.6.1
 openai==1.30.0  # langchain-openai 0.1.7 requires >=1.24.0
-# tiktoken - auto-installed by openai/langchain-openai (requires >=0.7)
+# tiktoken - auto-installed by openai/langchain-openai (resolves to 0.12.0)
 
 # Hybrid Search
 rank-bm25==0.2.2
 
-# Reranking
-flashrank==0.2.8
-
-# Document Processing - Python 3.12 compatible
-unstructured[pdf]==0.11.8
+# Document Processing (lightweight, no onnxruntime)
 pypdf==4.1.0
 python-docx==1.1.0
-
-# Observability
-langsmith==0.1.50
-opentelemetry-api==1.24.0
-opentelemetry-sdk==1.24.0
-
-# Evaluation
-ragas==0.1.7
 
 # API & Server
 fastapi==0.110.2
@@ -47,4 +35,3 @@ python-dotenv==1.0.1
 tenacity==8.2.3
 tqdm==4.66.2
 numpy==1.26.4
-pandas==2.2.1
