@@ -1,15 +1,17 @@
 """Tests for reranker module."""
 
-import pytest
 from unittest.mock import MagicMock, patch
-from src.reranker import Reranker, HybridSearchWithReranking
+
+import pytest
 from langchain_core.documents import Document
+
+from src.reranker import HybridSearchWithReranking, Reranker
 
 
 @pytest.mark.unit
 def test_reranker_init():
     """Test Reranker initialization."""
-    with patch("src.reranker.Ranker") as mock_ranker:
+    with patch("src.reranker.Ranker"):
         reranker = Reranker(model_name="test-model")
         assert reranker.ranker is not None
 
@@ -64,7 +66,7 @@ def test_hybrid_search_with_reranking_init():
     """Test HybridSearchWithReranking initialization."""
     mock_hybrid_searcher = MagicMock()
 
-    with patch("src.reranker.Reranker") as mock_reranker_class:
+    with patch("src.reranker.Reranker"):
         with patch("src.reranker.settings") as mock_settings:
             mock_settings.rerank_enabled = True
 
@@ -80,13 +82,8 @@ def test_hybrid_search_with_reranking_init():
 def test_search_with_reranking():
     """Test search with reranking enabled."""
     mock_hybrid_searcher = MagicMock()
-    mock_documents = [
-        Document(page_content=f"Doc {i}", metadata={"id": str(i)})
-        for i in range(5)
-    ]
-    mock_hybrid_searcher.search.return_value = [
-        (doc, 0.5) for doc in mock_documents
-    ]
+    mock_documents = [Document(page_content=f"Doc {i}", metadata={"id": str(i)}) for i in range(5)]
+    mock_hybrid_searcher.search.return_value = [(doc, 0.5) for doc in mock_documents]
 
     with patch("src.reranker.Ranker") as mock_ranker_class:
         with patch("src.reranker.settings") as mock_settings:
@@ -96,10 +93,7 @@ def test_search_with_reranking():
 
             # Mock reranker
             mock_ranker = MagicMock()
-            mock_ranker.rerank.return_value = [
-                {"id": i, "score": 0.9 - i * 0.1}
-                for i in range(3)
-            ]
+            mock_ranker.rerank.return_value = [{"id": i, "score": 0.9 - i * 0.1} for i in range(3)]
             mock_ranker_class.return_value = mock_ranker
 
             search = HybridSearchWithReranking(
@@ -119,13 +113,8 @@ def test_search_with_reranking():
 def test_search_without_reranking():
     """Test search with reranking disabled."""
     mock_hybrid_searcher = MagicMock()
-    mock_documents = [
-        Document(page_content=f"Doc {i}", metadata={"id": str(i)})
-        for i in range(5)
-    ]
-    mock_hybrid_searcher.search.return_value = [
-        (doc, 0.5) for doc in mock_documents
-    ]
+    mock_documents = [Document(page_content=f"Doc {i}", metadata={"id": str(i)}) for i in range(5)]
+    mock_hybrid_searcher.search.return_value = [(doc, 0.5) for doc in mock_documents]
 
     with patch("src.reranker.settings") as mock_settings:
         mock_settings.rerank_enabled = False

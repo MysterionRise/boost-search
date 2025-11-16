@@ -1,19 +1,14 @@
 """Qdrant vector store integration."""
 
-from typing import List, Dict, Any, Optional
+from typing import Any
+
+from langchain_community.vectorstores import Qdrant
+from langchain_core.documents import Document
 from qdrant_client import QdrantClient
 from qdrant_client.models import (
     Distance,
     VectorParams,
-    PointStruct,
-    Filter,
-    FieldCondition,
-    MatchValue,
-    SearchRequest,
 )
-from langchain_community.vectorstores import Qdrant
-from langchain_core.documents import Document
-import uuid
 
 from .config import settings
 from .embeddings import EmbeddingManager
@@ -70,9 +65,9 @@ class QdrantVectorStore:
 
     def add_documents(
         self,
-        documents: List[Document],
+        documents: list[Document],
         batch_size: int = 100,
-    ) -> List[str]:
+    ) -> list[str]:
         """Add documents to the vector store.
 
         Args:
@@ -91,8 +86,8 @@ class QdrantVectorStore:
         self,
         query: str,
         top_k: int = 10,
-        filter_dict: Optional[Dict[str, Any]] = None,
-    ) -> List[Document]:
+        filter_dict: dict[str, Any] | None = None,
+    ) -> list[Document]:
         """Perform vector similarity search.
 
         Args:
@@ -113,8 +108,8 @@ class QdrantVectorStore:
         self,
         query: str,
         top_k: int = 10,
-        filter_dict: Optional[Dict[str, Any]] = None,
-    ) -> List[tuple[Document, float]]:
+        filter_dict: dict[str, Any] | None = None,
+    ) -> list[tuple[Document, float]]:
         """Perform vector search with relevance scores.
 
         Args:
@@ -136,7 +131,7 @@ class QdrantVectorStore:
         self.client.delete_collection(collection_name=self.collection_name)
         print(f"Deleted collection: {self.collection_name}")
 
-    def get_collection_info(self) -> Dict[str, Any]:
+    def get_collection_info(self) -> dict[str, Any]:
         """Get information about the collection.
 
         Returns:

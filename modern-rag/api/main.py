@@ -1,21 +1,22 @@
 """FastAPI application for Modern RAG system."""
 
-from fastapi import FastAPI, HTTPException, UploadFile, File
+import os
+import sys
+from typing import Any
+
+import uvicorn
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from typing import List, Optional, Dict, Any
-import uvicorn
-import sys
-import os
 
 # Add parent directory to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from src import (
-    EmbeddingManager,
-    QdrantVectorStore,
-    HybridSearcher,
     DocumentProcessor,
+    EmbeddingManager,
+    HybridSearcher,
+    QdrantVectorStore,
     RAGPipeline,
     settings,
 )
@@ -37,36 +38,36 @@ app.add_middleware(
 )
 
 # Global state
-rag_pipeline: Optional[RAGPipeline] = None
-vector_store: Optional[QdrantVectorStore] = None
-doc_processor: Optional[DocumentProcessor] = None
+rag_pipeline: RAGPipeline | None = None
+vector_store: QdrantVectorStore | None = None
+doc_processor: DocumentProcessor | None = None
 
 
 # Request/Response models
 class QueryRequest(BaseModel):
     question: str = Field(..., description="Question to ask")
-    search_type: Optional[str] = Field("hybrid", description="Search type: vector, bm25, or hybrid")
-    top_k: Optional[int] = Field(3, description="Number of results")
-    rerank: Optional[bool] = Field(True, description="Apply reranking")
-    return_sources: Optional[bool] = Field(True, description="Include source documents")
+    search_type: str | None = Field("hybrid", description="Search type: vector, bm25, or hybrid")
+    top_k: int | None = Field(3, description="Number of results")
+    rerank: bool | None = Field(True, description="Apply reranking")
+    return_sources: bool | None = Field(True, description="Include source documents")
 
 
 class QueryResponse(BaseModel):
     question: str
     answer: str
-    sources: Optional[List[Dict[str, Any]]] = None
-    num_sources: Optional[int] = None
+    sources: list[dict[str, Any]] | None = None
+    num_sources: int | None = None
 
 
 class IndexRequest(BaseModel):
-    texts: List[str] = Field(..., description="Texts to index")
-    metadatas: Optional[List[Dict[str, Any]]] = Field(None, description="Metadata for each text")
+    texts: list[str] = Field(..., description="Texts to index")
+    metadatas: list[dict[str, Any]] | None = Field(None, description="Metadata for each text")
 
 
 class SearchRequest(BaseModel):
     query: str = Field(..., description="Search query")
-    search_type: Optional[str] = Field("hybrid", description="Search type")
-    top_k: Optional[int] = Field(5, description="Number of results")
+    search_type: str | None = Field("hybrid", description="Search type")
+    top_k: int | None = Field(5, description="Number of results")
 
 
 @app.on_event("startup")
@@ -164,7 +165,7 @@ async def query(request: QueryRequest):
         )
         return QueryResponse(**result)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @app.post("/search")
@@ -192,7 +193,7 @@ async def search(request: SearchRequest):
             ],
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @app.post("/index")
@@ -225,7 +226,7 @@ async def index_documents(request: IndexRequest):
             "document_ids": ids[:5],  # Return first 5 IDs
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @app.post("/upload")
@@ -247,7 +248,7 @@ async def upload_file(file: UploadFile = File(...)):
         chunks = doc_processor.process_files(file_paths=[tmp_path])
 
         # Add to vector store
-        ids = vector_store.add_documents(chunks)
+        vector_store.add_documents(chunks)
 
         # Update hybrid searcher
         current_docs = rag_pipeline.hybrid_searcher.documents
@@ -265,7 +266,7 @@ async def upload_file(file: UploadFile = File(...)):
         # Clean up on error
         if os.path.exists(tmp_path):
             os.unlink(tmp_path)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 if __name__ == "__main__":

@@ -1,13 +1,13 @@
 """Hybrid search combining BM25 and dense vector search."""
 
-from typing import List, Dict, Any, Optional
-from rank_bm25 import BM25Okapi
-from langchain_core.documents import Document
-import numpy as np
-from collections import defaultdict
+from typing import Any
 
-from .vector_store import QdrantVectorStore
+import numpy as np
+from langchain_core.documents import Document
+from rank_bm25 import BM25Okapi
+
 from .config import settings
+from .vector_store import QdrantVectorStore
 
 
 class HybridSearcher:
@@ -16,7 +16,7 @@ class HybridSearcher:
     def __init__(
         self,
         vector_store: QdrantVectorStore,
-        documents: List[Document] = None,
+        documents: list[Document] = None,
     ):
         """Initialize hybrid searcher.
 
@@ -38,7 +38,7 @@ class HybridSearcher:
         self.bm25 = BM25Okapi(tokenized_docs)
         print(f"Initialized BM25 with {len(self.documents)} documents")
 
-    def update_documents(self, documents: List[Document]):
+    def update_documents(self, documents: list[Document]):
         """Update the document corpus and rebuild BM25 index.
 
         Args:
@@ -47,7 +47,7 @@ class HybridSearcher:
         self.documents = documents
         self._init_bm25()
 
-    def bm25_search(self, query: str, top_k: int = 10) -> List[tuple[Document, float]]:
+    def bm25_search(self, query: str, top_k: int = 10) -> list[tuple[Document, float]]:
         """Perform BM25 keyword search.
 
         Args:
@@ -78,8 +78,8 @@ class HybridSearcher:
         query: str,
         top_k: int = None,
         alpha: float = 0.5,
-        filter_dict: Optional[Dict[str, Any]] = None,
-    ) -> List[tuple[Document, float]]:
+        filter_dict: dict[str, Any] | None = None,
+    ) -> list[tuple[Document, float]]:
         """Perform hybrid search combining BM25 and vector search.
 
         Args:
@@ -122,10 +122,10 @@ class HybridSearcher:
 
     def _combine_scores(
         self,
-        vector_results: List[tuple[Document, float]],
-        bm25_results: List[tuple[Document, float]],
+        vector_results: list[tuple[Document, float]],
+        bm25_results: list[tuple[Document, float]],
         alpha: float,
-    ) -> Dict[Document, float]:
+    ) -> dict[Document, float]:
         """Combine and normalize scores from different search methods.
 
         Args:
@@ -183,7 +183,7 @@ class HybridSearcher:
         search_type: str = None,
         top_k: int = None,
         **kwargs,
-    ) -> List[tuple[Document, float]]:
+    ) -> list[tuple[Document, float]]:
         """Unified search interface.
 
         Args:

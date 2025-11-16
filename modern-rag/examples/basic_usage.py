@@ -7,10 +7,10 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from src import (
-    EmbeddingManager,
-    QdrantVectorStore,
-    HybridSearcher,
     DocumentProcessor,
+    EmbeddingManager,
+    HybridSearcher,
+    QdrantVectorStore,
     RAGPipeline,
     settings,
 )
@@ -101,7 +101,9 @@ def main():
         print(f"Answer: {result['answer']}\n")
         print(f"Sources ({result['num_sources']}):")
         for i, source in enumerate(result["sources"], 1):
-            print(f"  [{i}] {source['metadata']['source']} (score: {source['relevance_score']:.3f})")
+            print(
+                f"  [{i}] {source['metadata']['source']} (score: {source['relevance_score']:.3f})"
+            )
         print()
 
     # Step 7: Cleanup (optional)

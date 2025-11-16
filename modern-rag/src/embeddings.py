@@ -1,10 +1,10 @@
 """Embedding models management."""
 
-from typing import List
-from sentence_transformers import SentenceTransformer
-import numpy as np
-from langchain_openai import OpenAIEmbeddings
+
 from langchain_core.embeddings import Embeddings
+from langchain_openai import OpenAIEmbeddings
+from sentence_transformers import SentenceTransformer
+
 from .config import settings
 
 
@@ -23,8 +23,7 @@ class EmbeddingManager:
 
         if use_openai:
             self.embeddings: Embeddings = OpenAIEmbeddings(
-                model="text-embedding-3-small",
-                openai_api_key=settings.openai_api_key
+                model="text-embedding-3-small", openai_api_key=settings.openai_api_key
             )
             self.dimension = 1536  # text-embedding-3-small dimension
         else:
@@ -33,7 +32,7 @@ class EmbeddingManager:
             # Wrap SentenceTransformer for LangChain compatibility
             self.embeddings = SentenceTransformerEmbeddings(self.model)
 
-    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
         """Embed a list of documents.
 
         Args:
@@ -44,7 +43,7 @@ class EmbeddingManager:
         """
         return self.embeddings.embed_documents(texts)
 
-    def embed_query(self, text: str) -> List[float]:
+    def embed_query(self, text: str) -> list[float]:
         """Embed a single query.
 
         Args:
@@ -62,20 +61,12 @@ class SentenceTransformerEmbeddings(Embeddings):
     def __init__(self, model: SentenceTransformer):
         self.model = model
 
-    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
         """Embed a list of documents."""
-        embeddings = self.model.encode(
-            texts,
-            convert_to_numpy=True,
-            show_progress_bar=False
-        )
+        embeddings = self.model.encode(texts, convert_to_numpy=True, show_progress_bar=False)
         return embeddings.tolist()
 
-    def embed_query(self, text: str) -> List[float]:
+    def embed_query(self, text: str) -> list[float]:
         """Embed a query."""
-        embedding = self.model.encode(
-            text,
-            convert_to_numpy=True,
-            show_progress_bar=False
-        )
+        embedding = self.model.encode(text, convert_to_numpy=True, show_progress_bar=False)
         return embedding.tolist()

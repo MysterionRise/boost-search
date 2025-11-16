@@ -1,7 +1,8 @@
 """End-to-end integration tests."""
 
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
 from langchain_core.documents import Document
 
 
@@ -10,10 +11,10 @@ from langchain_core.documents import Document
 def test_full_rag_pipeline():
     """Test complete RAG pipeline end-to-end."""
     from src import (
-        EmbeddingManager,
-        QdrantVectorStore,
-        HybridSearcher,
         DocumentProcessor,
+        EmbeddingManager,
+        HybridSearcher,
+        QdrantVectorStore,
         RAGPipeline,
     )
 
@@ -95,18 +96,17 @@ def test_full_rag_pipeline():
 @pytest.mark.integration
 def test_document_processing_pipeline():
     """Test document processing from file to chunks."""
-    from src.document_processor import DocumentProcessor
     import tempfile
     from pathlib import Path
+
+    from src.document_processor import DocumentProcessor
 
     processor = DocumentProcessor(chunk_size=200, chunk_overlap=20)
 
     # Create temporary test file
     with tempfile.TemporaryDirectory() as tmpdir:
         test_file = Path(tmpdir) / "test.txt"
-        test_file.write_text(
-            "This is a test document. " * 50  # Create a longer document
-        )
+        test_file.write_text("This is a test document. " * 50)  # Create a longer document
 
         # Process file
         chunks = processor.process_files(file_paths=[str(test_file)])

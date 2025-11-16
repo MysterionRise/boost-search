@@ -1,9 +1,11 @@
 """Tests for hybrid search module."""
 
-import pytest
 from unittest.mock import MagicMock, patch
-from src.hybrid_search import HybridSearcher
+
+import pytest
 from langchain_core.documents import Document
+
+from src.hybrid_search import HybridSearcher
 
 
 @pytest.mark.unit

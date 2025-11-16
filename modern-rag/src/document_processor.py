@@ -1,15 +1,15 @@
 """Document processing and chunking utilities."""
 
-from typing import List, Optional
 from pathlib import Path
-from langchain_core.documents import Document
+
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import (
+    Docx2txtLoader,
     PyPDFLoader,
     TextLoader,
     UnstructuredMarkdownLoader,
-    Docx2txtLoader,
 )
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_core.documents import Document
 
 from .config import settings
 
@@ -38,7 +38,7 @@ class DocumentProcessor:
             separators=["\n\n", "\n", ". ", " ", ""],
         )
 
-    def load_file(self, file_path: str) -> List[Document]:
+    def load_file(self, file_path: str) -> list[Document]:
         """Load a single file.
 
         Args:
@@ -75,8 +75,8 @@ class DocumentProcessor:
         self,
         directory_path: str,
         glob_pattern: str = "**/*",
-        file_types: Optional[List[str]] = None,
-    ) -> List[Document]:
+        file_types: list[str] | None = None,
+    ) -> list[Document]:
         """Load all supported files from a directory.
 
         Args:
@@ -104,9 +104,9 @@ class DocumentProcessor:
 
     def chunk_documents(
         self,
-        documents: List[Document],
+        documents: list[Document],
         add_context: bool = False,
-    ) -> List[Document]:
+    ) -> list[Document]:
         """Split documents into chunks.
 
         Args:
@@ -124,7 +124,7 @@ class DocumentProcessor:
 
         return chunks
 
-    def _add_contextual_info(self, chunks: List[Document]) -> List[Document]:
+    def _add_contextual_info(self, chunks: list[Document]) -> list[Document]:
         """Add contextual information to chunks.
 
         This implements a simplified version of Anthropic's contextual retrieval,
@@ -160,10 +160,10 @@ class DocumentProcessor:
 
     def process_files(
         self,
-        file_paths: List[str] = None,
+        file_paths: list[str] = None,
         directory_path: str = None,
         add_context: bool = False,
-    ) -> List[Document]:
+    ) -> list[Document]:
         """Process files and return chunked documents.
 
         Args:

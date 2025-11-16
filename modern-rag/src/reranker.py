@@ -1,8 +1,8 @@
 """Reranking implementation using FlashRank."""
 
-from typing import List, Tuple
-from langchain_core.documents import Document
+
 from flashrank import Ranker, RerankRequest
+from langchain_core.documents import Document
 
 from .config import settings
 
@@ -22,9 +22,9 @@ class Reranker:
     def rerank(
         self,
         query: str,
-        documents: List[Document],
+        documents: list[Document],
         top_k: int = None,
-    ) -> List[Tuple[Document, float]]:
+    ) -> list[tuple[Document, float]]:
         """Rerank documents based on query relevance.
 
         Args:
@@ -43,11 +43,13 @@ class Reranker:
         # Prepare passages for reranking
         passages = []
         for i, doc in enumerate(documents):
-            passages.append({
-                "id": i,
-                "text": doc.page_content,
-                "meta": doc.metadata,
-            })
+            passages.append(
+                {
+                    "id": i,
+                    "text": doc.page_content,
+                    "meta": doc.metadata,
+                }
+            )
 
         # Create rerank request
         rerank_request = RerankRequest(
@@ -89,7 +91,7 @@ class HybridSearchWithReranking:
         top_k_final: int = None,
         rerank: bool = None,
         **kwargs,
-    ) -> List[Tuple[Document, float]]:
+    ) -> list[tuple[Document, float]]:
         """Search with optional reranking.
 
         Args:

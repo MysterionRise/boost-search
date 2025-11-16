@@ -1,24 +1,29 @@
 """Integration tests for FastAPI application."""
 
+from unittest.mock import patch
+
 import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import MagicMock, patch
 
 
 @pytest.fixture
 def test_client():
     """Create test client for API."""
     # Import here to avoid issues with startup
-    import sys
     import os
+    import sys
+
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "api"))
 
-    with patch("api.main.EmbeddingManager"), \
-         patch("api.main.QdrantVectorStore"), \
-         patch("api.main.HybridSearcher"), \
-         patch("api.main.RAGPipeline"):
+    with (
+        patch("api.main.EmbeddingManager"),
+        patch("api.main.QdrantVectorStore"),
+        patch("api.main.HybridSearcher"),
+        patch("api.main.RAGPipeline"),
+    ):
 
         from api.main import app
+
         client = TestClient(app)
         yield client
 
@@ -87,9 +92,11 @@ def test_api_index(test_client):
     """Test index endpoint."""
     from langchain_core.documents import Document
 
-    with patch("api.main.vector_store") as mock_vs, \
-         patch("api.main.doc_processor") as mock_dp, \
-         patch("api.main.rag_pipeline") as mock_pipeline:
+    with (
+        patch("api.main.vector_store") as mock_vs,
+        patch("api.main.doc_processor") as mock_dp,
+        patch("api.main.rag_pipeline") as mock_pipeline,
+    ):
 
         mock_dp.chunk_documents.return_value = [
             Document(page_content="Test", metadata={"id": "1"}),
@@ -115,8 +122,7 @@ def test_api_index(test_client):
 @pytest.mark.requires_docker
 def test_api_stats(test_client):
     """Test stats endpoint."""
-    with patch("api.main.vector_store") as mock_vs, \
-         patch("api.main.settings") as mock_settings:
+    with patch("api.main.vector_store") as mock_vs, patch("api.main.settings") as mock_settings:
 
         mock_vs.get_collection_info.return_value = {
             "name": "test_collection",

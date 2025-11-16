@@ -1,8 +1,9 @@
 """Tests for evaluation module."""
 
 import pytest
-from src.evaluation import RetrievalEvaluator, EvaluationExample
 from langchain_core.documents import Document
+
+from src.evaluation import EvaluationExample, RetrievalEvaluator
 
 
 @pytest.mark.unit

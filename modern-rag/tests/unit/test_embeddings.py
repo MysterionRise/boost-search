@@ -1,7 +1,9 @@
 """Tests for embeddings module."""
 
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
+
 from src.embeddings import EmbeddingManager, SentenceTransformerEmbeddings
 
 

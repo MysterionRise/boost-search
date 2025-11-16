@@ -1,11 +1,11 @@
 """RAG pipeline implementation using LangChain."""
 
-from typing import List, Dict, Any, Optional
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough
+from typing import Any
+
 from langchain_core.documents import Document
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
 
 from .config import settings
 from .hybrid_search import HybridSearcher
@@ -53,12 +53,14 @@ class RAGPipeline:
             )
         elif self.llm_provider == "ollama":
             from langchain_community.llms import Ollama
+
             return Ollama(
                 model=self.llm_model,
                 temperature=settings.llm_temperature,
             )
         elif self.llm_provider == "anthropic":
             from langchain_anthropic import ChatAnthropic
+
             return ChatAnthropic(
                 model=self.llm_model,
                 temperature=settings.llm_temperature,
@@ -95,7 +97,7 @@ Answer:"""
 
         return chain
 
-    def _format_docs(self, docs: List[Document]) -> str:
+    def _format_docs(self, docs: list[Document]) -> str:
         """Format documents for context.
 
         Args:
@@ -118,7 +120,7 @@ Answer:"""
         top_k: int = None,
         rerank: bool = None,
         return_sources: bool = True,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Query the RAG system.
 
         Args:
@@ -144,10 +146,12 @@ Answer:"""
         scores = [score for _, score in results]
 
         # Generate answer
-        answer = self.chain.invoke({
-            "question": question,
-            "documents": documents,
-        })
+        answer = self.chain.invoke(
+            {
+                "question": question,
+                "documents": documents,
+            }
+        )
 
         # Prepare response
         response = {
@@ -171,9 +175,9 @@ Answer:"""
     def query_with_chat_history(
         self,
         question: str,
-        chat_history: List[Dict[str, str]],
+        chat_history: list[dict[str, str]],
         **kwargs,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Query with chat history for conversational RAG.
 
         Args:
@@ -186,11 +190,15 @@ Answer:"""
         """
         # Create a contextualized question using chat history
         if chat_history:
-            history_context = "\n".join([
-                f"User: {msg['question']}\nAssistant: {msg['answer']}"
-                for msg in chat_history[-3:]  # Last 3 turns
-            ])
-            contextualized_question = f"Previous conversation:\n{history_context}\n\nCurrent question: {question}"
+            history_context = "\n".join(
+                [
+                    f"User: {msg['question']}\nAssistant: {msg['answer']}"
+                    for msg in chat_history[-3:]  # Last 3 turns
+                ]
+            )
+            contextualized_question = (
+                f"Previous conversation:\n{history_context}\n\nCurrent question: {question}"
+            )
         else:
             contextualized_question = question
 
@@ -202,9 +210,9 @@ Answer:"""
 
     def batch_query(
         self,
-        questions: List[str],
+        questions: list[str],
         **kwargs,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Process multiple questions in batch.
 
         Args:

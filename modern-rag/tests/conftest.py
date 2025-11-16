@@ -2,9 +2,9 @@
 
 import os
 import sys
-from typing import Generator
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))

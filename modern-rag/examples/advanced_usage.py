@@ -6,10 +6,10 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from src import (
-    EmbeddingManager,
-    QdrantVectorStore,
-    HybridSearcher,
     DocumentProcessor,
+    EmbeddingManager,
+    HybridSearcher,
+    QdrantVectorStore,
     RAGPipeline,
     settings,
 )
@@ -85,7 +85,9 @@ def main():
         )
 
         for i, source in enumerate(result["sources"], 1):
-            print(f"  [{i}] Score: {source['relevance_score']:.3f} - {source['metadata']['source']}")
+            print(
+                f"  [{i}] Score: {source['relevance_score']:.3f} - {source['metadata']['source']}"
+            )
 
     # Test with reranking
     print("\n\nHYBRID + RERANKING:")
@@ -119,10 +121,12 @@ def main():
         print(f"Q: {question}")
         print(f"A: {result['answer']}\n")
 
-        chat_history.append({
-            "question": question,
-            "answer": result["answer"],
-        })
+        chat_history.append(
+            {
+                "question": question,
+                "answer": result["answer"],
+            }
+        )
 
     # Evaluate retrieval
     print("=== Retrieval Evaluation ===\n")

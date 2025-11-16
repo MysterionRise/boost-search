@@ -1,18 +1,19 @@
 """Evaluation framework using RAGAS."""
 
-from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
-from datasets import Dataset
+
 import pandas as pd
+from datasets import Dataset
 
 try:
     from ragas import evaluate
     from ragas.metrics import (
-        faithfulness,
         answer_relevancy,
         context_precision,
         context_recall,
+        faithfulness,
     )
+
     RAGAS_AVAILABLE = True
 except ImportError:
     RAGAS_AVAILABLE = False
@@ -22,10 +23,11 @@ except ImportError:
 @dataclass
 class EvaluationExample:
     """Single evaluation example."""
+
     question: str
     ground_truth: str
-    answer: Optional[str] = None
-    contexts: Optional[List[str]] = None
+    answer: str | None = None
+    contexts: list[str] | None = None
 
 
 class RAGEvaluator:
@@ -45,9 +47,9 @@ class RAGEvaluator:
 
     def evaluate(
         self,
-        examples: List[EvaluationExample],
+        examples: list[EvaluationExample],
         rag_pipeline=None,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """Evaluate RAG system.
 
         Args:
@@ -63,9 +65,7 @@ class RAGEvaluator:
                 if not example.answer:
                     result = rag_pipeline.query(example.question, return_sources=True)
                     example.answer = result["answer"]
-                    example.contexts = [
-                        src["content"] for src in result["sources"]
-                    ]
+                    example.contexts = [src["content"] for src in result["sources"]]
 
         # Prepare dataset
         data = {
@@ -87,8 +87,8 @@ class RAGEvaluator:
 
     def create_evaluation_report(
         self,
-        results: Dict[str, float],
-        output_path: Optional[str] = None,
+        results: dict[str, float],
+        output_path: str | None = None,
     ) -> pd.DataFrame:
         """Create detailed evaluation report.
 
@@ -112,7 +112,7 @@ class RetrievalEvaluator:
     """Evaluates retrieval performance."""
 
     @staticmethod
-    def calculate_mrr(results: List[List[tuple]], relevant_docs: List[set]) -> float:
+    def calculate_mrr(results: list[list[tuple]], relevant_docs: list[set]) -> float:
         """Calculate Mean Reciprocal Rank.
 
         Args:
@@ -136,8 +136,8 @@ class RetrievalEvaluator:
 
     @staticmethod
     def calculate_precision_at_k(
-        results: List[List[tuple]],
-        relevant_docs: List[set],
+        results: list[list[tuple]],
+        relevant_docs: list[set],
         k: int = 5,
     ) -> float:
         """Calculate Precision@K.
@@ -154,8 +154,7 @@ class RetrievalEvaluator:
         for query_results, relevant_set in zip(results, relevant_docs):
             top_k = query_results[:k]
             relevant_retrieved = sum(
-                1 for doc, _ in top_k
-                if doc.metadata.get("id", doc.page_content) in relevant_set
+                1 for doc, _ in top_k if doc.metadata.get("id", doc.page_content) in relevant_set
             )
             precisions.append(relevant_retrieved / k)
 
@@ -163,8 +162,8 @@ class RetrievalEvaluator:
 
     @staticmethod
     def calculate_ndcg(
-        results: List[List[tuple]],
-        relevance_scores: List[Dict[str, float]],
+        results: list[list[tuple]],
+        relevance_scores: list[dict[str, float]],
         k: int = 10,
     ) -> float:
         """Calculate Normalized Discounted Cumulative Gain.

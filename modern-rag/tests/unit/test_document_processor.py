@@ -1,8 +1,9 @@
 """Tests for document processor module."""
 
+
 import pytest
-from pathlib import Path
 from langchain_core.documents import Document
+
 from src.document_processor import DocumentProcessor
 
 

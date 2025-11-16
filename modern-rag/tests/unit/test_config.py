@@ -1,6 +1,7 @@
 """Tests for configuration module."""
 
 import pytest
+
 from src.config import Settings
 
 
@@ -44,5 +45,7 @@ def test_settings_validation():
     assert settings.llm_provider == "openai"
 
     # Invalid provider should raise validation error
-    with pytest.raises(Exception):  # Pydantic validation error
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
         Settings(llm_provider="invalid_provider")

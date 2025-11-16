@@ -1,8 +1,9 @@
 """Configuration management for Modern RAG system."""
 
-from pydantic_settings import BaseSettings
-from pydantic import Field
 from typing import Literal
+
+from pydantic import Field
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -24,24 +25,17 @@ class Settings(BaseSettings):
     qdrant_collection_name: str = Field(default="documents", env="QDRANT_COLLECTION_NAME")
 
     # Embeddings
-    embedding_model: str = Field(
-        default="BAAI/bge-large-en-v1.5",
-        env="EMBEDDING_MODEL"
-    )
+    embedding_model: str = Field(default="BAAI/bge-large-en-v1.5", env="EMBEDDING_MODEL")
 
     # LLM Configuration
     llm_provider: Literal["openai", "ollama", "anthropic"] = Field(
-        default="openai",
-        env="LLM_PROVIDER"
+        default="openai", env="LLM_PROVIDER"
     )
     llm_model: str = Field(default="gpt-4-turbo-preview", env="LLM_MODEL")
     llm_temperature: float = Field(default=0.0, env="LLM_TEMPERATURE")
 
     # Search Configuration
-    search_type: Literal["vector", "bm25", "hybrid"] = Field(
-        default="hybrid",
-        env="SEARCH_TYPE"
-    )
+    search_type: Literal["vector", "bm25", "hybrid"] = Field(default="hybrid", env="SEARCH_TYPE")
     rerank_enabled: bool = Field(default=True, env="RERANK_ENABLED")
     top_k_retrieval: int = Field(default=20, env="TOP_K_RETRIEVAL")
     top_k_rerank: int = Field(default=5, env="TOP_K_RERANK")
