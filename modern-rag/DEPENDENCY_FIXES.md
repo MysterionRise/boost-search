@@ -25,6 +25,18 @@ Requires-Python >=3.9.0,<3.12 (but CI runs Python 3.12)
 - Version 0.11.8 is the last version compatible with Python 3.12
 - Newer 0.14+ versions also support Python 3.12 but have breaking changes
 
+**Problem 3**:
+```
+ERROR: Cannot install langchain-openai==0.1.7 and tiktoken==0.6.0
+The conflict is: langchain-openai 0.1.7 requires tiktoken<1,>=0.7
+```
+
+**Solution**:
+- Updated openai: `1.14.0` → `1.30.0` (required by langchain-openai 0.1.7)
+- Removed tiktoken pin from requirements-lock.txt
+- Tiktoken is now auto-installed as a transitive dependency
+- Auto-resolves to tiktoken==0.12.0 (satisfies >=0.7 requirement)
+
 ### 2. Dev Dependencies (requirements-dev.txt)
 **Problem**:
 ```
@@ -47,6 +59,7 @@ The conflict is: pytest-asyncio requires pytest<8
 - `requirements-lock.txt` - Exact versions for production
 - `DEPENDENCIES.md` - Comprehensive dependency guide
 - `verify_install.py` - Dependency verification script
+- `verify_deps.sh` - Quick dependency compatibility test script
 
 ### Updated Files
 - `requirements.txt` - Version ranges for flexibility
@@ -91,7 +104,8 @@ langchain==0.1.20
 langchain-community==0.0.38
 langchain-core==0.1.52
 langchain-openai==0.1.7
-openai==1.14.0
+openai==1.30.0                # Updated for langchain-openai compatibility
+# tiktoken - auto-installed by openai/langchain-openai (resolves to 0.12.0)
 qdrant-client==1.9.1
 sentence-transformers==2.6.1
 unstructured==0.11.8          # Python 3.12 compatible
