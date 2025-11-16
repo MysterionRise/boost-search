@@ -3,7 +3,7 @@
 ## Issues Fixed
 
 ### 1. Production Dependencies (requirements.txt)
-**Problem**:
+**Problem 1**:
 ```
 ERROR: Cannot install langchain==0.1.9 and langchain-community==0.0.20
 The conflict is: langchain 0.1.9 requires langchain-community>=0.0.21
@@ -13,6 +13,17 @@ The conflict is: langchain 0.1.9 requires langchain-community>=0.0.21
 - Updated LangChain ecosystem to compatible versions
 - Created flexible requirements.txt with version ranges
 - Created locked requirements-lock.txt with exact versions
+
+**Problem 2**:
+```
+ERROR: Could not find a version that satisfies unstructured==0.13.4
+Requires-Python >=3.9.0,<3.12 (but CI runs Python 3.12)
+```
+
+**Solution**:
+- Changed unstructured: `0.13.4` → `0.11.8` (supports Python 3.12)
+- Version 0.11.8 is the last version compatible with Python 3.12
+- Newer 0.14+ versions also support Python 3.12 but have breaking changes
 
 ### 2. Dev Dependencies (requirements-dev.txt)
 **Problem**:
@@ -83,6 +94,7 @@ langchain-openai==0.1.7
 openai==1.14.0
 qdrant-client==1.9.1
 sentence-transformers==2.6.1
+unstructured==0.11.8          # Python 3.12 compatible
 fastapi==0.110.2
 pydantic==2.7.0
 ```
