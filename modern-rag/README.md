@@ -78,8 +78,17 @@ cd boost-search/modern-rag
 
 2. **Install dependencies**
 ```bash
+# Option A: Flexible versions (recommended for development)
 pip install -r requirements.txt
+
+# Option B: Locked versions (recommended for production)
+pip install -r requirements-lock.txt
+
+# Dev dependencies (for testing/linting)
+pip install -r requirements-dev.txt
 ```
+
+> **Note**: If you encounter dependency conflicts, use `requirements-lock.txt` which contains tested, compatible versions. See [DEPENDENCIES.md](DEPENDENCIES.md) for details.
 
 3. **Configure environment**
 ```bash
