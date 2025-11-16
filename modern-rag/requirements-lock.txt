@@ -1,0 +1,49 @@
+# Locked versions - Tested and working together
+# Generated: 2024-05-15
+# Use this for reproducible builds
+
+# Core LLM Framework
+langchain==0.1.20
+langchain-community==0.0.38
+langchain-core==0.1.52
+langchain-openai==0.1.7
+
+# Vector Database
+qdrant-client==1.9.1
+
+# Embeddings & Models
+sentence-transformers==2.6.1
+openai==1.14.0
+tiktoken==0.6.0
+
+# Hybrid Search
+rank-bm25==0.2.2
+
+# Reranking
+flashrank==0.2.8
+
+# Document Processing
+unstructured[pdf]==0.13.4
+pypdf==4.1.0
+python-docx==1.1.0
+
+# Observability
+langsmith==0.1.50
+opentelemetry-api==1.24.0
+opentelemetry-sdk==1.24.0
+
+# Evaluation
+ragas==0.1.7
+
+# API & Server
+fastapi==0.110.2
+uvicorn[standard]==0.29.0
+pydantic==2.7.0
+pydantic-settings==2.2.1
+
+# Utilities
+python-dotenv==1.0.1
+tenacity==8.2.3
+tqdm==4.66.2
+numpy==1.26.4
+pandas==2.2.1

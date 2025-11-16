@@ -44,6 +44,7 @@ qdrant_storage/
 *.txt
 !requirements.txt
 !requirements-dev.txt
+!requirements-lock.txt
 !README*.txt
 !README*.md
 
