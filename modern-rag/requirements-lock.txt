@@ -1,5 +1,5 @@
 # Locked versions - Tested and working together
-# Generated: 2024-05-15
+# Generated: 2024-11-16
 # Python 3.11 and 3.12 compatible
 # Use this for reproducible builds
 
@@ -14,7 +14,7 @@ qdrant-client==1.9.1
 
 # Embeddings & Models
 sentence-transformers==2.6.1
-openai==1.14.0
+openai==1.30.0  # langchain-openai 0.1.7 requires >=1.24.0
 tiktoken==0.6.0
 
 # Hybrid Search
@@ -24,7 +24,7 @@ rank-bm25==0.2.2
 flashrank==0.2.8
 
 # Document Processing - Python 3.12 compatible
-unstructured[pdf]==0.11.8  # Last version supporting Python 3.12
+unstructured[pdf]==0.11.8
 pypdf==4.1.0
 python-docx==1.1.0
 
