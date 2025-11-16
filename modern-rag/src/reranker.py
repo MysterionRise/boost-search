@@ -1,6 +1,5 @@
 """Reranking implementation using FlashRank."""
 
-
 from flashrank import Ranker, RerankRequest
 from langchain_core.documents import Document
 

@@ -1,6 +1,5 @@
 """Tests for document processor module."""
 
-
 import pytest
 from langchain_core.documents import Document
 

@@ -1,6 +1,5 @@
 """Embedding models management."""
 
-
 from langchain_core.embeddings import Embeddings
 from langchain_openai import OpenAIEmbeddings
 from sentence_transformers import SentenceTransformer
