@@ -1,15 +1,20 @@
 # Test dependencies
-pytest==8.0.0
-pytest-asyncio==0.23.4
-pytest-cov==4.1.0
-pytest-mock==3.12.0
-pytest-timeout==2.2.0
+pytest>=7.4.0,<8.0.0  # pytest-asyncio requires <8
+pytest-asyncio>=0.23.0,<0.24.0
+pytest-cov>=4.1.0
+pytest-mock>=3.12.0
+pytest-timeout>=2.2.0
+httpx>=0.26.0  # For FastAPI testing
 
 # Code quality
-black==24.1.1
-ruff==0.2.1
-mypy==1.8.0
-types-requests==2.31.0.20240125
+black>=24.1.0,<25.0.0
+ruff>=0.2.0,<0.3.0
+mypy>=1.8.0,<2.0.0
+types-requests>=2.31.0
+
+# Security
+bandit>=1.7.6
+safety>=3.0.0
 
 # Pre-commit hooks (optional)
-pre-commit==3.6.0
+pre-commit>=3.6.0
