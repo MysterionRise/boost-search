@@ -1,9 +1,21 @@
-"""Evaluation framework using RAGAS."""
+"""Evaluation framework (Python 3.12+ compatible)."""
 
 from dataclasses import dataclass
 
-import pandas as pd
-from datasets import Dataset
+# Optional dependencies for advanced evaluation
+try:
+    import pandas as pd
+
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
+
+try:
+    from datasets import Dataset
+
+    DATASETS_AVAILABLE = True
+except ImportError:
+    DATASETS_AVAILABLE = False
 
 try:
     from ragas import evaluate
@@ -17,7 +29,6 @@ try:
     RAGAS_AVAILABLE = True
 except ImportError:
     RAGAS_AVAILABLE = False
-    print("RAGAS not available. Install with: pip install ragas")
 
 
 @dataclass
@@ -31,12 +42,19 @@ class EvaluationExample:
 
 
 class RAGEvaluator:
-    """Evaluates RAG system performance using RAGAS."""
+    """Evaluates RAG system performance using RAGAS.
+
+    Note: Requires optional dependencies: pip install ragas datasets pandas
+    """
 
     def __init__(self):
         """Initialize evaluator."""
         if not RAGAS_AVAILABLE:
-            raise ImportError("RAGAS is not installed. Install with: pip install ragas")
+            raise ImportError(
+                "RAGAS is not installed. Install with: pip install ragas datasets"
+            )
+        if not DATASETS_AVAILABLE:
+            raise ImportError("datasets library is not installed. Install with: pip install datasets")
 
         self.metrics = [
             faithfulness,
@@ -89,7 +107,7 @@ class RAGEvaluator:
         self,
         results: dict[str, float],
         output_path: str | None = None,
-    ) -> pd.DataFrame:
+    ):
         """Create detailed evaluation report.
 
         Args:
@@ -97,8 +115,18 @@ class RAGEvaluator:
             output_path: Optional path to save report
 
         Returns:
-            DataFrame with results
+            DataFrame with results (if pandas available) or dict
         """
+        if not PANDAS_AVAILABLE:
+            print("Warning: pandas not available. Returning results as dict.")
+            if output_path:
+                import json
+
+                with open(output_path, "w") as f:
+                    json.dump(results, f, indent=2)
+                print(f"Evaluation report saved to: {output_path}")
+            return results
+
         df = pd.DataFrame([results])
 
         if output_path:
