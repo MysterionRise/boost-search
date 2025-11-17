@@ -116,6 +116,10 @@ def test_combine_scores(sample_documents):
 
     assert isinstance(combined, dict)
     assert len(combined) > 0
-    # Scores should be normalized between 0 and 1
-    for score in combined.values():
+    # Values are (doc, score) tuples
+    for content, (doc, score) in combined.items():
+        assert isinstance(content, str)
+        assert isinstance(doc, Document)
+        assert isinstance(score, float)
+        # Scores should be normalized between 0 and 1
         assert 0 <= score <= 1

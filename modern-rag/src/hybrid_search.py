@@ -110,22 +110,22 @@ class HybridSearcher:
             alpha=alpha,
         )
 
-        # Sort by combined score
+        # Sort by combined score (value is (doc, score) tuple)
         sorted_results = sorted(
-            combined_scores.items(),
+            combined_scores.values(),
             key=lambda x: x[1],
             reverse=True,
         )[:top_k]
 
         # Return as list of (document, score) tuples
-        return [(doc, score) for doc, score in sorted_results]
+        return sorted_results
 
     def _combine_scores(
         self,
         vector_results: list[tuple[Document, float]],
         bm25_results: list[tuple[Document, float]],
         alpha: float,
-    ) -> dict[Document, float]:
+    ) -> dict[str, tuple[Document, float]]:
         """Combine and normalize scores from different search methods.
 
         Args:
@@ -134,7 +134,7 @@ class HybridSearcher:
             alpha: Weight for vector search
 
         Returns:
-            Dictionary mapping documents to combined scores
+            Dictionary mapping content strings to (document, score) tuples
         """
         # Normalize vector scores (Qdrant returns distance, lower is better for cosine)
         vector_scores = {}
@@ -173,7 +173,8 @@ class HybridSearcher:
             vec_score = vector_scores.get(content, 0.0)
             bm25_score = bm25_scores.get(content, 0.0)
             hybrid_score = alpha * vec_score + (1 - alpha) * bm25_score
-            combined_scores[doc] = hybrid_score
+            # Use content as key (hashable), store (doc, score) as value
+            combined_scores[content] = (doc, hybrid_score)
 
         return combined_scores
 

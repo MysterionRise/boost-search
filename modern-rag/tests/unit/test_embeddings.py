@@ -2,6 +2,7 @@
 
 from unittest.mock import MagicMock, patch
 
+import numpy as np
 import pytest
 
 from src.embeddings import EmbeddingManager, SentenceTransformerEmbeddings
@@ -58,7 +59,8 @@ def test_embed_query(mock_sentence_transformer, mock_settings):
 def test_sentence_transformer_wrapper():
     """Test SentenceTransformer wrapper."""
     mock_model = MagicMock()
-    mock_model.encode.return_value = [[0.1, 0.2, 0.3]]
+    # Return numpy arrays (what sentence-transformers actually returns)
+    mock_model.encode.return_value = np.array([[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]])
 
     wrapper = SentenceTransformerEmbeddings(mock_model)
 
@@ -66,8 +68,12 @@ def test_sentence_transformer_wrapper():
     docs = ["doc1", "doc2"]
     embeddings = wrapper.embed_documents(docs)
     assert isinstance(embeddings, list)
+    assert len(embeddings) == 2
+    assert all(isinstance(emb, list) for emb in embeddings)
 
     # Test embed_query
+    mock_model.encode.return_value = np.array([0.1, 0.2, 0.3])
     query = "test query"
     embedding = wrapper.embed_query(query)
     assert isinstance(embedding, list)
+    assert len(embedding) == 3
