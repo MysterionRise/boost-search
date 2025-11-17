@@ -4,6 +4,7 @@ import os
 import sys
 from unittest.mock import MagicMock, patch
 
+import numpy as np
 import pytest
 
 # Add src to path
@@ -58,7 +59,8 @@ def sample_documents():
 def mock_embedding_model():
     """Mock embedding model."""
     mock = MagicMock()
-    mock.encode.return_value = [[0.1] * 384]  # Simulated embedding
+    # Return numpy array (what sentence-transformers actually returns)
+    mock.encode.return_value = np.array([[0.1] * 384])
     mock.get_sentence_embedding_dimension.return_value = 384
     return mock
 
@@ -92,7 +94,8 @@ def mock_sentence_transformer():
     """Mock SentenceTransformer."""
     with patch("src.embeddings.SentenceTransformer") as mock:
         model = MagicMock()
-        model.encode.return_value = [[0.1] * 384]
+        # Return numpy array (what sentence-transformers actually returns)
+        model.encode.return_value = np.array([[0.1] * 384])
         model.get_sentence_embedding_dimension.return_value = 384
         mock.return_value = model
         yield mock
