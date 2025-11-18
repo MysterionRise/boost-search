@@ -1,5 +1,7 @@
 """Evaluation framework (Python 3.12+ compatible)."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 # Optional dependencies for advanced evaluation

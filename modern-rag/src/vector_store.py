@@ -1,5 +1,7 @@
 """Qdrant vector store integration."""
 
+from __future__ import annotations
+
 from typing import Any
 
 from langchain_community.vectorstores import Qdrant

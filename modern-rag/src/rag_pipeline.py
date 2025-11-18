@@ -1,5 +1,7 @@
 """RAG pipeline implementation using LangChain."""
 
+from __future__ import annotations
+
 from typing import Any
 
 from langchain_core.documents import Document

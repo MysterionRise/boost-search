@@ -1,5 +1,7 @@
 """Document processing and chunking utilities."""
 
+from __future__ import annotations
+
 from pathlib import Path
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
