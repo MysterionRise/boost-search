@@ -10,7 +10,7 @@ langchain-core==0.1.52
 langchain-openai==0.1.7
 
 # Vector Database
-qdrant-client==1.9.1
+opensearch-py==2.7.1  # OpenSearch 3.0 compatible client
 
 # Embeddings & Models (cross-encoder for reranking included)
 sentence-transformers==2.6.1

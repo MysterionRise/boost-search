@@ -17,7 +17,7 @@ def test_client():
 
     with (
         patch("api.main.EmbeddingManager"),
-        patch("api.main.QdrantVectorStore"),
+        patch("api.main.OpenSearchVectorStore"),
         patch("api.main.HybridSearcher"),
         patch("api.main.RAGPipeline"),
     ):
@@ -45,10 +45,10 @@ def test_api_root(test_client):
 def test_api_health_check(test_client):
     """Test health check endpoint."""
     with patch("api.main.vector_store") as mock_vs:
-        mock_vs.get_collection_info.return_value = {
-            "name": "test",
-            "points_count": 0,
-            "vectors_count": 0,
+        mock_vs.get_index_info.return_value = {
+            "name": "test_index",
+            "docs_count": 0,
+            "size_in_bytes": 0,
             "status": "green",
         }
 
@@ -124,10 +124,10 @@ def test_api_stats(test_client):
     """Test stats endpoint."""
     with patch("api.main.vector_store") as mock_vs, patch("api.main.settings") as mock_settings:
 
-        mock_vs.get_collection_info.return_value = {
-            "name": "test_collection",
-            "points_count": 100,
-            "vectors_count": 100,
+        mock_vs.get_index_info.return_value = {
+            "name": "test_index",
+            "docs_count": 100,
+            "size_in_bytes": 1024,
             "status": "green",
         }
 
@@ -142,4 +142,4 @@ def test_api_stats(test_client):
         assert response.status_code == 200
         data = response.json()
         assert "total_documents" in data
-        assert "collection_name" in data
+        assert "index_name" in data

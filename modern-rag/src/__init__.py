@@ -6,12 +6,12 @@ from .embeddings import EmbeddingManager
 from .hybrid_search import HybridSearcher
 from .rag_pipeline import RAGPipeline
 from .reranker import HybridSearchWithReranking, Reranker
-from .vector_store import QdrantVectorStore
+from .vector_store import OpenSearchVectorStore
 
 __all__ = [
     "settings",
     "EmbeddingManager",
-    "QdrantVectorStore",
+    "OpenSearchVectorStore",
     "HybridSearcher",
     "Reranker",
     "HybridSearchWithReranking",

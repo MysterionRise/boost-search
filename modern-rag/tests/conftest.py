@@ -16,10 +16,12 @@ def mock_settings():
     """Mock settings for testing."""
     with patch("src.config.settings") as mock:
         mock.openai_api_key = "test-key"
-        mock.qdrant_host = "localhost"
-        mock.qdrant_port = 6333
-        mock.qdrant_api_key = ""
-        mock.qdrant_collection_name = "test_collection"
+        mock.opensearch_host = "localhost"
+        mock.opensearch_port = 9200
+        mock.opensearch_user = "admin"
+        mock.opensearch_password = "admin"
+        mock.opensearch_index_name = "test_index"
+        mock.opensearch_use_ssl = False
         mock.embedding_model = "sentence-transformers/all-MiniLM-L6-v2"
         mock.llm_provider = "openai"
         mock.llm_model = "gpt-3.5-turbo"
@@ -66,14 +68,22 @@ def mock_embedding_model():
 
 
 @pytest.fixture
-def mock_qdrant_client():
-    """Mock Qdrant client."""
-    with patch("src.vector_store.QdrantClient") as mock:
+def mock_opensearch_client():
+    """Mock OpenSearch client."""
+    with patch("src.vector_store.OpenSearch") as mock:
         client = MagicMock()
-        client.get_collections.return_value.collections = []
-        client.get_collection.return_value.points_count = 0
-        client.get_collection.return_value.vectors_count = 0
-        client.get_collection.return_value.status = "green"
+        client.indices.exists.return_value = True
+        client.indices.stats.return_value = {
+            "indices": {
+                "test_index": {
+                    "total": {
+                        "docs": {"count": 0},
+                        "store": {"size_in_bytes": 0},
+                    }
+                }
+            }
+        }
+        client.cluster.health.return_value = {"status": "green"}
         mock.return_value = client
         yield mock
 

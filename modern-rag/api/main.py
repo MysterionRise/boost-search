@@ -16,7 +16,7 @@ from src import (
     DocumentProcessor,
     EmbeddingManager,
     HybridSearcher,
-    QdrantVectorStore,
+    OpenSearchVectorStore,
     RAGPipeline,
     settings,
 )
@@ -39,7 +39,7 @@ app.add_middleware(
 
 # Global state
 rag_pipeline: RAGPipeline | None = None
-vector_store: QdrantVectorStore | None = None
+vector_store: OpenSearchVectorStore | None = None
 doc_processor: DocumentProcessor | None = None
 
 
@@ -79,8 +79,8 @@ async def startup_event():
 
     # Initialize components
     embedding_manager = EmbeddingManager()
-    vector_store = QdrantVectorStore(
-        collection_name=settings.qdrant_collection_name,
+    vector_store = OpenSearchVectorStore(
+        index_name=settings.opensearch_index_name,
         embedding_manager=embedding_manager,
     )
     doc_processor = DocumentProcessor()
@@ -124,8 +124,8 @@ async def health_check():
 
     return {
         "status": "healthy",
-        "qdrant_connected": True,
-        "collection_info": vector_store.get_collection_info(),
+        "opensearch_connected": True,
+        "index_info": vector_store.get_index_info(),
     }
 
 
@@ -135,10 +135,10 @@ async def get_stats():
     if vector_store is None:
         raise HTTPException(status_code=503, detail="System not initialized")
 
-    info = vector_store.get_collection_info()
+    info = vector_store.get_index_info()
     return {
-        "collection_name": info["name"],
-        "total_documents": info["points_count"],
+        "index_name": info["name"],
+        "total_documents": info["docs_count"],
         "settings": {
             "embedding_model": settings.embedding_model,
             "llm_provider": settings.llm_provider,

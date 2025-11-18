@@ -15,18 +15,18 @@ def test_full_rag_pipeline():
         DocumentProcessor,
         EmbeddingManager,
         HybridSearcher,
-        QdrantVectorStore,
+        OpenSearchVectorStore,
         RAGPipeline,
     )
 
     # Mock external dependencies
-    with patch("src.vector_store.QdrantClient") as mock_qdrant:
+    with patch("src.vector_store.OpenSearch") as mock_opensearch:
         with patch("src.embeddings.SentenceTransformer") as mock_st:
             with patch("src.rag_pipeline.ChatOpenAI") as mock_llm:
                 # Setup mocks
                 mock_client = MagicMock()
-                mock_client.get_collections.return_value.collections = []
-                mock_qdrant.return_value = mock_client
+                mock_client.indices.exists.return_value = True
+                mock_opensearch.return_value = mock_client
 
                 mock_model = MagicMock()
                 # Return numpy array (what sentence-transformers actually returns)
@@ -38,18 +38,18 @@ def test_full_rag_pipeline():
                 mock_llm_instance.invoke.return_value.content = "Test answer"
                 mock_llm.return_value = mock_llm_instance
 
-                # Mock Qdrant vectorstore operations
-                with patch("src.vector_store.Qdrant") as mock_langchain_qdrant:
+                # Mock OpenSearch vectorstore operations
+                with patch("src.vector_store.OpenSearchVectorSearch") as mock_langchain_opensearch:
                     mock_vs = MagicMock()
                     mock_vs.similarity_search_with_score.return_value = [
                         (Document(page_content="Test doc", metadata={"id": "1"}), 0.9)
                     ]
-                    mock_langchain_qdrant.return_value = mock_vs
+                    mock_langchain_opensearch.return_value = mock_vs
 
                     # Initialize components
                     embedding_manager = EmbeddingManager(use_openai=False)
-                    vector_store = QdrantVectorStore(
-                        collection_name="test_e2e",
+                    vector_store = OpenSearchVectorStore(
+                        index_name="test_e2e",
                         embedding_manager=embedding_manager,
                     )
 

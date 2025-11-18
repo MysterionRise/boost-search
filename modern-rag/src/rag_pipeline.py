@@ -12,7 +12,7 @@ from langchain_openai import ChatOpenAI
 from .config import settings
 from .hybrid_search import HybridSearcher
 from .reranker import HybridSearchWithReranking
-from .vector_store import QdrantVectorStore
+from .vector_store import OpenSearchVectorStore
 
 
 class RAGPipeline:
@@ -20,7 +20,7 @@ class RAGPipeline:
 
     def __init__(
         self,
-        vector_store: QdrantVectorStore,
+        vector_store: OpenSearchVectorStore,
         hybrid_searcher: HybridSearcher,
         llm_provider: str = None,
         llm_model: str = None,
@@ -28,7 +28,7 @@ class RAGPipeline:
         """Initialize RAG pipeline.
 
         Args:
-            vector_store: Qdrant vector store
+            vector_store: OpenSearch vector store
             hybrid_searcher: Hybrid search instance
             llm_provider: LLM provider ('openai', 'ollama', 'anthropic')
             llm_model: Model name

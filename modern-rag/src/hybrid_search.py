@@ -9,7 +9,7 @@ from langchain_core.documents import Document
 from rank_bm25 import BM25Okapi
 
 from .config import settings
-from .vector_store import QdrantVectorStore
+from .vector_store import OpenSearchVectorStore
 
 
 class HybridSearcher:
@@ -17,13 +17,13 @@ class HybridSearcher:
 
     def __init__(
         self,
-        vector_store: QdrantVectorStore,
+        vector_store: OpenSearchVectorStore,
         documents: list[Document] = None,
     ):
         """Initialize hybrid searcher.
 
         Args:
-            vector_store: Qdrant vector store instance
+            vector_store: OpenSearch vector store instance
             documents: List of documents for BM25 indexing
         """
         self.vector_store = vector_store

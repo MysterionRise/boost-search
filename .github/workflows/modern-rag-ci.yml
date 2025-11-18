@@ -48,7 +48,7 @@ jobs:
       - name: Run unit tests
         env:
           OPENAI_API_KEY: test-key
-          QDRANT_HOST: localhost
+          OPENSEARCH_HOST: localhost
         run: |
           pytest tests/unit -v --cov=src --cov-report=xml --cov-report=term-missing -m "unit and not requires_api_key"
 
@@ -103,16 +103,20 @@ jobs:
         working-directory: ./modern-rag
 
     services:
-      qdrant:
-        image: qdrant/qdrant:latest
+      opensearch:
+        image: opensearchproject/opensearch:3.0.0
         ports:
-          - 6333:6333
+          - 9200:9200
+        env:
+          discovery.type: single-node
+          DISABLE_SECURITY_PLUGIN: true
+          OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
         options: >-
-          --health-cmd "curl -f http://localhost:6333/health || exit 1"
-          --health-interval 5s
-          --health-timeout 3s
+          --health-cmd "curl -f http://localhost:9200/_cluster/health || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
           --health-retries 10
-          --health-start-period 10s
+          --health-start-period 30s
 
     steps:
       - name: Checkout code
@@ -130,31 +134,33 @@ jobs:
           pip install -r requirements-lock.txt
           pip install -r requirements-dev.txt
 
-      - name: Wait for Qdrant
+      - name: Wait for OpenSearch
         run: |
-          echo "Waiting for Qdrant to be ready..."
-          for i in {1..30}; do
-            if curl -f http://localhost:6333/health 2>/dev/null; then
-              echo "Qdrant is ready!"
+          echo "Waiting for OpenSearch to be ready..."
+          for i in {1..60}; do
+            if curl -f http://localhost:9200/_cluster/health 2>/dev/null; then
+              echo "OpenSearch is ready!"
               exit 0
             fi
-            echo "Attempt $i/30: Qdrant not ready yet, waiting..."
-            sleep 1
+            echo "Attempt $i/60: OpenSearch not ready yet, waiting..."
+            sleep 2
           done
-          echo "ERROR: Qdrant failed to become ready after 30 seconds"
+          echo "ERROR: OpenSearch failed to become ready after 120 seconds"
           exit 1
 
-      - name: Verify Qdrant connection
+      - name: Verify OpenSearch connection
         run: |
-          echo "Testing Qdrant API endpoints..."
-          curl -v http://localhost:6333/health
-          curl -v http://localhost:6333/collections
+          echo "Testing OpenSearch API endpoints..."
+          curl -v http://localhost:9200/_cluster/health
+          curl -v http://localhost:9200/_cat/indices
 
       - name: Run integration tests
         env:
           OPENAI_API_KEY: test-key
-          QDRANT_HOST: localhost
-          QDRANT_PORT: 6333
+          OPENSEARCH_HOST: localhost
+          OPENSEARCH_PORT: 9200
+          OPENSEARCH_USER: admin
+          OPENSEARCH_PASSWORD: admin
         run: |
           pytest tests/integration -v -m "integration and not requires_api_key" --timeout=60
 

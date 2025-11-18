@@ -1,69 +1,90 @@
-"""Qdrant vector store integration."""
+"""OpenSearch vector store integration."""
 
 from __future__ import annotations
 
 from typing import Any
 
-from langchain_community.vectorstores import Qdrant
+from langchain_community.vectorstores import OpenSearchVectorSearch
 from langchain_core.documents import Document
-from qdrant_client import QdrantClient
-from qdrant_client.models import (
-    Distance,
-    VectorParams,
-)
+from opensearchpy import OpenSearch
 
 from .config import settings
 from .embeddings import EmbeddingManager
 
 
-class QdrantVectorStore:
-    """Manages Qdrant vector database operations."""
+class OpenSearchVectorStore:
+    """Manages OpenSearch vector database operations."""
 
     def __init__(
         self,
-        collection_name: str = None,
+        index_name: str = None,
         embedding_manager: EmbeddingManager = None,
     ):
-        """Initialize Qdrant vector store.
+        """Initialize OpenSearch vector store.
 
         Args:
-            collection_name: Name of the Qdrant collection
+            index_name: Name of the OpenSearch index
             embedding_manager: Embedding model manager
         """
-        self.collection_name = collection_name or settings.qdrant_collection_name
+        self.index_name = index_name or settings.opensearch_index_name
         self.embedding_manager = embedding_manager or EmbeddingManager()
 
-        # Initialize Qdrant client
-        self.client = QdrantClient(
-            host=settings.qdrant_host,
-            port=settings.qdrant_port,
-            api_key=settings.qdrant_api_key if settings.qdrant_api_key else None,
+        # Build OpenSearch connection URL
+        self.opensearch_url = f"http{'s' if settings.opensearch_use_ssl else ''}://{settings.opensearch_host}:{settings.opensearch_port}"
+
+        # Initialize OpenSearch client
+        self.client = OpenSearch(
+            hosts=[{"host": settings.opensearch_host, "port": settings.opensearch_port}],
+            http_auth=(settings.opensearch_user, settings.opensearch_password),
+            use_ssl=settings.opensearch_use_ssl,
+            verify_certs=False,  # For development; set to True in production
+            ssl_show_warn=False,
         )
 
-        # Initialize collection if it doesn't exist
-        self._init_collection()
+        # Initialize index if it doesn't exist
+        self._init_index()
 
-        # LangChain Qdrant wrapper
-        self.langchain_vectorstore = Qdrant(
-            client=self.client,
-            collection_name=self.collection_name,
-            embeddings=self.embedding_manager.embeddings,
+        # LangChain OpenSearch wrapper
+        self.langchain_vectorstore = OpenSearchVectorSearch(
+            index_name=self.index_name,
+            embedding_function=self.embedding_manager.embeddings,
+            opensearch_url=self.opensearch_url,
+            http_auth=(settings.opensearch_user, settings.opensearch_password),
+            use_ssl=settings.opensearch_use_ssl,
+            verify_certs=False,
+            ssl_show_warn=False,
         )
 
-    def _init_collection(self):
-        """Initialize Qdrant collection if it doesn't exist."""
-        collections = self.client.get_collections().collections
-        collection_names = [col.name for col in collections]
-
-        if self.collection_name not in collection_names:
-            self.client.create_collection(
-                collection_name=self.collection_name,
-                vectors_config=VectorParams(
-                    size=self.embedding_manager.dimension,
-                    distance=Distance.COSINE,
-                ),
-            )
-            print(f"Created collection: {self.collection_name}")
+    def _init_index(self):
+        """Initialize OpenSearch index if it doesn't exist."""
+        if not self.client.indices.exists(index=self.index_name):
+            # Create index with k-NN settings for vector search
+            index_body = {
+                "settings": {
+                    "index": {
+                        "knn": True,  # Enable k-NN plugin
+                        "knn.algo_param.ef_search": 100,
+                    }
+                },
+                "mappings": {
+                    "properties": {
+                        "vector_field": {
+                            "type": "knn_vector",
+                            "dimension": self.embedding_manager.dimension,
+                            "method": {
+                                "name": "hnsw",
+                                "space_type": "cosinesimil",
+                                "engine": "nmslib",
+                                "parameters": {"ef_construction": 128, "m": 24},
+                            },
+                        },
+                        "text": {"type": "text"},
+                        "metadata": {"type": "object"},
+                    }
+                },
+            }
+            self.client.indices.create(index=self.index_name, body=index_body)
+            print(f"Created index: {self.index_name}")
 
     def add_documents(
         self,
@@ -79,10 +100,7 @@ class QdrantVectorStore:
         Returns:
             List of document IDs
         """
-        return self.langchain_vectorstore.add_documents(
-            documents=documents,
-            batch_size=batch_size,
-        )
+        return self.langchain_vectorstore.add_documents(documents=documents)
 
     def vector_search(
         self,
@@ -103,7 +121,6 @@ class QdrantVectorStore:
         return self.langchain_vectorstore.similarity_search(
             query=query,
             k=top_k,
-            filter=filter_dict,
         )
 
     def vector_search_with_score(
@@ -125,24 +142,25 @@ class QdrantVectorStore:
         return self.langchain_vectorstore.similarity_search_with_score(
             query=query,
             k=top_k,
-            filter=filter_dict,
         )
 
-    def delete_collection(self):
-        """Delete the entire collection."""
-        self.client.delete_collection(collection_name=self.collection_name)
-        print(f"Deleted collection: {self.collection_name}")
+    def delete_index(self):
+        """Delete the entire index."""
+        self.client.indices.delete(index=self.index_name)
+        print(f"Deleted index: {self.index_name}")
 
-    def get_collection_info(self) -> dict[str, Any]:
-        """Get information about the collection.
+    def get_index_info(self) -> dict[str, Any]:
+        """Get information about the index.
 
         Returns:
-            Collection metadata and statistics
+            Index metadata and statistics
         """
-        info = self.client.get_collection(collection_name=self.collection_name)
+        stats = self.client.indices.stats(index=self.index_name)
+        index_stats = stats["indices"][self.index_name]
+
         return {
-            "name": self.collection_name,
-            "points_count": info.points_count,
-            "vectors_count": info.vectors_count,
-            "status": info.status,
+            "name": self.index_name,
+            "docs_count": index_stats["total"]["docs"]["count"],
+            "size_in_bytes": index_stats["total"]["store"]["size_in_bytes"],
+            "status": "green" if self.client.cluster.health()["status"] == "green" else "yellow",
         }
