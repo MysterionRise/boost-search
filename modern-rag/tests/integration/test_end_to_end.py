@@ -2,6 +2,7 @@
 
 from unittest.mock import MagicMock, patch
 
+import numpy as np
 import pytest
 from langchain_core.documents import Document
 
@@ -28,7 +29,8 @@ def test_full_rag_pipeline():
                 mock_qdrant.return_value = mock_client
 
                 mock_model = MagicMock()
-                mock_model.encode.return_value = [[0.1] * 384]
+                # Return numpy array (what sentence-transformers actually returns)
+                mock_model.encode.return_value = np.array([[0.1] * 384])
                 mock_model.get_sentence_embedding_dimension.return_value = 384
                 mock_st.return_value = mock_model
 
