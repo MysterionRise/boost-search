@@ -1,7 +1,7 @@
 """Reranking implementation using sentence-transformers cross-encoder (Python 3.12 compatible)."""
 
-from sentence_transformers import CrossEncoder
 from langchain_core.documents import Document
+from sentence_transformers import CrossEncoder
 
 from .config import settings
 
