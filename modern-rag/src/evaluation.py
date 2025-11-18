@@ -52,11 +52,11 @@ class RAGEvaluator:
     def __init__(self):
         """Initialize evaluator."""
         if not RAGAS_AVAILABLE:
-            raise ImportError(
-                "RAGAS is not installed. Install with: pip install ragas datasets"
-            )
+            raise ImportError("RAGAS is not installed. Install with: pip install ragas datasets")
         if not DATASETS_AVAILABLE:
-            raise ImportError("datasets library is not installed. Install with: pip install datasets")
+            raise ImportError(
+                "datasets library is not installed. Install with: pip install datasets"
+            )
 
         self.metrics = [
             faithfulness,

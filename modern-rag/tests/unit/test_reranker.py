@@ -83,9 +83,7 @@ def test_hybrid_search_with_reranking_init():
 def test_search_with_reranking():
     """Test search with reranking enabled."""
     mock_hybrid_searcher = MagicMock()
-    mock_documents = [
-        Document(page_content=f"Doc {i}", metadata={"id": str(i)}) for i in range(5)
-    ]
+    mock_documents = [Document(page_content=f"Doc {i}", metadata={"id": str(i)}) for i in range(5)]
     mock_hybrid_searcher.search.return_value = [(doc, 0.5) for doc in mock_documents]
 
     with patch("src.reranker.CrossEncoder") as mock_cross_encoder_class:
