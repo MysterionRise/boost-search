@@ -34,8 +34,12 @@ def test_full_rag_pipeline():
                 mock_model.get_sentence_embedding_dimension.return_value = 384
                 mock_st.return_value = mock_model
 
+                # Create a proper mock response with content attribute
+                mock_response = MagicMock()
+                mock_response.content = "Test answer"
+
                 mock_llm_instance = MagicMock()
-                mock_llm_instance.invoke.return_value.content = "Test answer"
+                mock_llm_instance.invoke.return_value = mock_response
                 mock_llm.return_value = mock_llm_instance
 
                 # Mock OpenSearch vectorstore operations

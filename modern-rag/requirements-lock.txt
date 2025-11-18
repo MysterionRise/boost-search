@@ -27,6 +27,7 @@ python-docx==1.1.0
 # API & Server
 fastapi==0.110.2
 uvicorn[standard]==0.29.0
+python-multipart==0.0.12  # Required for FastAPI form data
 pydantic==2.9.2  # Python 3.12 ForwardRef compatibility
 pydantic-settings==2.5.2
 
