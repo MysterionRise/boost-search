@@ -1,0 +1,38 @@
+# Python 3.12+ Compatible - Locked Versions
+# Generated: 2025-11-16
+# Removed problematic dependencies: flashrank, unstructured, ragas
+# Use this for reproducible builds
+
+# Core LLM Framework
+langchain==0.1.20
+langchain-community==0.0.38
+langchain-core==0.1.52
+langchain-openai==0.1.7
+
+# Vector Database
+opensearch-py==2.7.1  # OpenSearch 3.0 compatible client
+
+# Embeddings & Models (cross-encoder for reranking included)
+sentence-transformers==2.6.1
+openai==1.30.0  # langchain-openai 0.1.7 requires >=1.24.0
+# tiktoken - auto-installed by openai/langchain-openai (resolves to 0.12.0)
+
+# Hybrid Search
+rank-bm25==0.2.2
+
+# Document Processing (lightweight, no onnxruntime)
+pypdf==4.1.0
+python-docx==1.1.0
+
+# API & Server
+fastapi==0.110.2
+uvicorn[standard]==0.29.0
+python-multipart==0.0.12  # Required for FastAPI form data
+pydantic==2.9.2  # Python 3.12 ForwardRef compatibility
+pydantic-settings==2.5.2
+
+# Utilities
+python-dotenv==1.0.1
+tenacity==8.2.3
+tqdm==4.66.2
+numpy==1.26.4
